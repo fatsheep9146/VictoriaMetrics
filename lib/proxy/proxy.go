@@ -34,6 +34,17 @@ func MustNewURL(u string) *URL {
 	}
 }
 
+// NewURL returns new URL for the given u.
+func NewURL(u string) (*URL, error) {
+	pu, err := url.Parse(u)
+	if err != nil {
+		return nil, err
+	}
+	return &URL{
+		URL: pu,
+	}, nil
+}
+
 // GetURL return the underlying url.
 func (u *URL) GetURL() *url.URL {
 	if u == nil || u.URL == nil {

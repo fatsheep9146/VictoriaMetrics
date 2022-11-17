@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"github.com/VictoriaMetrics/VictoriaMetrics/lib/auth"
 	"io"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/VictoriaMetrics/VictoriaMetrics/lib/auth"
 
 	"github.com/VictoriaMetrics/VictoriaMetrics/lib/logger"
 	"github.com/VictoriaMetrics/VictoriaMetrics/lib/procutil"
