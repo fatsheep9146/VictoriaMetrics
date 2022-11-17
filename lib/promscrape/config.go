@@ -1280,6 +1280,17 @@ func (swc *scrapeWorkConfig) getScrapeWork(target string, extraLabels, metaLabel
 		at = newToken
 	}
 
+	var proxyUrl *proxy.URL = swc.proxyURL
+	proxyUrlStr := promrelabel.GetLabelValueByName(labels, "__proxy_url__")
+	if len(proxyUrlStr) > 0 {
+		p, err := proxy.NewURL(proxyUrlStr)
+		if err != nil {
+			return nil, fmt.Errorf("cannot parse __proxy_url__=%q for job=%q: %w", proxyUrlStr, swc.jobName, err)
+		}
+		proxyUrl = p
+	}
+	logger.Infof("parse __proxy_url__ for job [%q] is [%q]", swc.jobName, proxyUrlStr)
+
 	if !strings.HasPrefix(metricsPath, "/") {
 		metricsPath = "/" + metricsPath
 	}
@@ -1351,17 +1362,6 @@ func (swc *scrapeWorkConfig) getScrapeWork(target string, extraLabels, metaLabel
 	promrelabel.SortLabels(labels)
 	// Reduce memory usage by interning all the strings in labels.
 	internLabelStrings(labels)
-
-	var proxyUrl *proxy.URL = swc.proxyURL
-	proxyUrlStr := promrelabel.GetLabelValueByName(labels, "__proxy_url__")
-	if len(proxyUrlStr) > 0 {
-		p, err := proxy.NewURL(proxyUrlStr)
-		if err != nil {
-			return nil, fmt.Errorf("cannot parse __proxy_url__=%q for job=%q: %w", proxyUrlStr, swc.jobName, err)
-		}
-		proxyUrl = p
-	}
-	logger.Infof("parse __proxy_url__ for job [%q] is [%q]", swc.jobName, proxyUrlStr)
 
 	sw := &ScrapeWork{
 		ScrapeURL:            scrapeURL,
